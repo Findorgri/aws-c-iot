@@ -26,8 +26,9 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt-add-repository ppa:lttng/stable-2.13
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake libssl-dev
+        sudo apt-get install -y build-essential cmake libssl-dev liblttng-ust-dev lttng-tools
 
     - name: Set environment variables and create directory
       run: |
@@ -53,23 +54,23 @@ jobs:
         cmake -S aws-c-common -B aws-c-common/build -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH
         cmake --build aws-c-common/build --target install
 
-    - name: Clone and build aws-c-cal
+    - name: Clone and build aws-c-mqtt
       run: |
-        git clone https://github.com/awslabs/aws-c-cal.git
-        cmake -S aws-c-cal -B aws-c-cal/build -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$INSTALL_PATH
-        cmake --build aws-c-cal/build --target install
+        git clone https://github.com/awslabs/aws-c-mqtt.git
+        cmake -S aws-c-mqtt -B aws-c-mqtt/build -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$INSTALL_PATH
+        cmake --build aws-c-mqtt/build --target install
+
+    - name: Clone and build aws-c-iot
+      run: |
+        git clone https://github.com/awslabs/aws-c-iot.git
+        cmake -S aws-c-iot -B aws-c-iot/build -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$INSTALL_PATH
+        cmake --build aws-c-iot/build --verbose --target install
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
         build-mode: manual
-
-    - name: Build aws-c-iot (Verbose)
-      run: |
-        git clone https://github.com/awslabs/aws-c-iot.git
-        cmake -S aws-c-iot -B aws-c-iot/build -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$INSTALL_PATH
-        cmake --build aws-c-iot/build --verbose --target install
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
