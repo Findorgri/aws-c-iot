@@ -2,9 +2,9 @@ name: "CodeQL Analysis"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
   schedule:
     - cron: '0 0 * * 0'  # Weekly scan on Sundays at midnight UTC
 
@@ -30,11 +30,10 @@ jobs:
         sudo apt-get install -y build-essential cmake libssl-dev
 
     - name: Set environment variables and create directory
-  run: |
-    export INSTALL_PATH=$HOME/aws-install
-    echo "INSTALL_PATH=$INSTALL_PATH" >> $GITHUB_ENV
-    mkdir -p "$INSTALL_PATH"
-
+      run: |
+        export INSTALL_PATH=$HOME/aws-install
+        echo "INSTALL_PATH=$INSTALL_PATH" >> $GITHUB_ENV
+        mkdir -p "$INSTALL_PATH"
 
     - name: Clone and build aws-lc
       run: |
